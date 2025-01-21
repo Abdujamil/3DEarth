@@ -10,16 +10,18 @@ const w = window.innerWidth;
 const h = window.innerHeight;
 let isRotating = true;
 let isMouseDown = false;
+
 let lastX = 0;
 let lastY = 0;
-let velocityX = 0.0003; // Начальная скорость вращения по оси X
-let velocityY = 0.0003; // Начальная скорость вращения по оси Y
+let velocityX = 0; // Начальная скорость вращения по оси X
+let velocityY = 0; // Начальная скорость вращения по оси Y
 let damping = 0.98; // Коэффициент затухания (чем ближе к 1, тем дольше вращение)
+let scaleFactor = 1;
 
 const scene = new THREE.Scene();
 
 const camera = new THREE.PerspectiveCamera(35, w / h, 0.1, 1000);
-camera.position.z = 5;
+camera.position.z = 4.5;
 const renderer = new THREE.WebGLRenderer({ antialias: true });
 
 renderer.setSize(w, h);
@@ -37,9 +39,9 @@ const controls = new OrbitControls(camera, renderer.domElement);
 controls.enablePan = true;
 controls.minDistance = 5;
 controls.maxDistance = 5;
-// controls.minPolarAngle = Math.PI / 2; // Ограничить угол (горизонтальная плоскость)
-// controls.maxPolarAngle = Math.PI / 2; // Ограничить угол (горизонтальная плоскость)
-// controls.enablePan = false; // Отключить панорамирование
+controls.minPolarAngle = Math.PI / 2; // Ограничить угол (горизонтальная плоскость)
+controls.maxPolarAngle = Math.PI / 2; // Ограничить угол (горизонтальная плоскость)
+controls.enablePan = false; // Отключить панорамирование
 
 const detail = 12;
 const loader = new THREE.TextureLoader();
@@ -58,7 +60,6 @@ earthGroup.add(earthMesh);
 
 const lightsMat = new THREE.MeshBasicMaterial({
     map: loader.load("./textures/8k_earth_nightmap.webp"),
-    // map: loader.load("./textures/2k_earth_daymap.webp"),
     blending: THREE.AdditiveBlending,
     color: 0xffffff,
     opacity: 1
@@ -262,7 +263,6 @@ function updateCountryList(orgName) {
     countryList.innerHTML = '';
 
     organizations[orgName].forEach((country, index) => {
-        console.log(country, index);
         const countryItem = document.createElement('div');
         countryItem.className = 'country-item';
 
@@ -303,8 +303,6 @@ document.querySelectorAll('.organization-btn').forEach(btn => {
             earthGroup.add(pillar);
             activePillars.push(pillar);
         });
-
-        console.log(orgName);
 
         // Update country list
         updateCountryList(orgName);
@@ -431,37 +429,6 @@ window.addEventListener('mousemove', onMouseMove, false);
 let hoveredGroup = null;
 
 function checkIntersections() {
-    // raycaster.setFromCamera(mouse, camera);
-    // const intersects = raycaster.intersectObject(earthMesh, true);
-
-    // // Reset all pillars
-    // earthGroup.children.forEach(group => {
-    //     if (group.userData && group.userData.country) {
-    //         const pillar = group.children[0];
-    //         if (pillar && pillar.material.uniforms) {
-    //             gsap.to(pillar.material.uniforms.hoverIntensity, { value: 0.0, duration: 0.3 });
-    //         }
-    //     }
-    // });
-
-    // if (intersects.length > 0) {
-    //     const intersectedPoint = intersects[0].point;
-    //     const closestPillar = earthGroup.children.reduce((closest, child) => {
-    //         if (child.userData && child.userData.country) {
-    //             const distance = child.children[0].position.distanceTo(intersectedPoint);
-    //             return (!closest || distance < closest.distance) ? { obj: child, distance } : closest;
-    //         }
-    //         return closest;
-    //     }, null);
-
-    //     if (closestPillar && closestPillar.distance < 0.5) {
-    //         const pillar = closestPillar.obj.children[0];
-    //         if (pillar && pillar.material.uniforms) {
-    //             gsap.to(pillar.material.uniforms.hoverIntensity, { value: 2.0, duration: 0.3 });
-    //         }
-    //     }
-    // }
-
     raycaster.setFromCamera(mouse, camera);
     const intersects = raycaster.intersectObjects(earthGroup.children);
 
@@ -482,38 +449,20 @@ function highlightPillar(group) {
 }
 
 
-// Анимация вращения с учетом инерции
-// function animateRotation() {
-//     if (!isMouseDown) {
-//         // Добавляем инерцию, если мышь не нажата
-//         earthGroup.rotation.y += velocityX;
-//         // earthGroup.rotation.x += velocityY;
-
-//         // Применяем затухание скорости
-//         velocityX *= damping;
-//         // velocityY *= damping;
-
-//         // Останавливаем вращение, если скорость становится очень маленькой
-//         if (Math.abs(velocityX) < 0.0001) velocityX = 0;
-//         // if (Math.abs(velocityY) < 0.0001) velocityY = 0;
-//     }
-
-//     // Продолжаем обновлять сцену
-//     requestAnimationFrame(animateRotation);
-// }
-// // Запуск анимации
-// animateRotation();
-
+// Анимация вращения с инерцией
 function animateRotation() {
     if (!isMouseDown) {
-        // Вращение только по оси Y
+        // Вращение по осям с инерцией
         earthGroup.rotation.y += velocityX;
+        earthGroup.rotation.x += velocityY;
 
         // Применяем затухание скорости
         velocityX *= damping;
+        velocityY *= damping;
 
         // Останавливаем вращение, если скорость становится очень маленькой
         if (Math.abs(velocityX) < 0.0001) velocityX = 0;
+        if (Math.abs(velocityY) < 0.0001) velocityY = 0;
     }
 
     // Обновляем рендер сцены
@@ -521,30 +470,41 @@ function animateRotation() {
     requestAnimationFrame(animateRotation);
 }
 
+// Запуск анимации вращения
 animateRotation();
-//     isMouseDown = true;
-//     lastX = event.clientX; // Запоминаем начальные координаты
-//     lastY = event.clientY;
-//     velocityX = 0; // Сбрасываем скорость при новом движении
-//     velocityY = 0;
-// });
 
 window.addEventListener("mousemove", (event) => {
     if (isMouseDown) {
-        const deltaX = event.clientX - lastX; // Изменение по горизонтали
-        velocityX = deltaX * 0.0001; // Устанавливаем скорость вращения по оси Y
-        lastX = event.clientX; // Обновляем координаты
+        // Изменение координат мыши
+        const deltaX = event.clientX - lastX;
+        const deltaY = event.clientY - lastY;
+
+        // Определяем скорость вращения по осям X и Y
+        velocityX = deltaX * 0.001;
+        velocityY = deltaY * 0.001;
+
+        // Обновляем последние координаты мыши
+        lastX = event.clientX;
+        lastY = event.clientY;
     }
 });
 
-// Обработчики событий
 window.addEventListener("mousedown", (event) => {
-    isRotating = false; // Останавливаем вращение
+    isMouseDown = true; // Начинаем движение
     lastX = event.clientX;
+    lastY = event.clientY;
+    velocityX = 0;  // Сбрасываем начальную скорость
+    velocityY = 0;
 });
 
 window.addEventListener("mouseup", () => {
-    isRotating = true; // Возобновляем вращение
+    isMouseDown = false; // Останавливаем движение
+});
+
+window.addEventListener("wheel", () => {
+    // Остановить вращение при прокрутке колесика
+    velocityX = 0;
+    velocityY = 0;
 });
 
 
@@ -585,12 +545,11 @@ document.body.appendChild(panel);
 function animate(currentTime) {
     requestAnimationFrame(animate);
 
-    // Вращение только по вертикальной оси (Y)
     if (isRotating) {
         earthGroup.rotation.y += params.rotationSpeed;
     }
 
-    stars.rotation.x += params.starSpeed;
+    // stars.rotation.x += params.starSpeed;
     stars.rotation.y += params.starSpeed;
 
     // Pass camera to updateStarVisibility
