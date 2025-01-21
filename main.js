@@ -45,9 +45,9 @@ const detail = 12;
 const loader = new THREE.TextureLoader();
 const geometry = new THREE.IcosahedronGeometry(1, detail);
 const material = new THREE.MeshPhongMaterial({
-    map: loader.load("./textures/00_earthmap1k.jpg"),
-    specularMap: loader.load("./textures/02_earthspec1k.jpg"),
-    bumpMap: loader.load("./textures/01_earthbump1k.jpg"),
+    map: loader.load("./textures/00_earthmap1k.webp"),
+    specularMap: loader.load("./textures/02_earthspec1k.webp"),
+    bumpMap: loader.load("./textures/01_earthbump1k.webp"),
     bumpScale: 0.04,
     color: 0x9aa5a6,
     saturation: 0,
@@ -57,8 +57,8 @@ const earthMesh = new THREE.Mesh(geometry, material);
 earthGroup.add(earthMesh);
 
 const lightsMat = new THREE.MeshBasicMaterial({
-    map: loader.load("./textures/8k_earth_nightmap.jpg"),
-    // map: loader.load("./textures/2k_earth_daymap.jpg"),
+    map: loader.load("./textures/8k_earth_nightmap.webp"),
+    // map: loader.load("./textures/2k_earth_daymap.webp"),
     blending: THREE.AdditiveBlending,
     color: 0xffffff,
     opacity: 1
@@ -68,11 +68,11 @@ const lightsMesh = new THREE.Mesh(geometry, lightsMat);
 earthGroup.add(lightsMesh);
 
 const cloudsMat = new THREE.MeshStandardMaterial({
-    map: loader.load("./textures/8k_earth_clouds.jpg"),
+    map: loader.load("./textures/8k_earth_clouds.webp"),
     transparent: true,
     opacity: 0.7,  // Reduced from 0.8 to make clouds less dense
     blending: THREE.AdditiveBlending,
-    alphaMap: loader.load('./textures/05_earthcloudmaptrans.jpg'),
+    alphaMap: loader.load('./textures/05_earthcloudmaptrans.webp'),
     color: 0xffffff  // Changed from 0xe0e0e0 to white for brighter clouds
 });
 
@@ -197,59 +197,59 @@ function createLightPillar(country, lat, lon, color = 0xffffff) {
 // Replace the existing countries array with this organization structure
 const organizations = {
     BRICS: [
-        { name: "Бразилия", lat: -8.7667, lon: -63.9, flag: "./images/png22.png" },
-        { name: "Эфиопия", lat: 9.1958, lon: 40.4925, flag: "./images/png19.png" },
-        { name: "Россия", lat: 62.14389, lon: 105.57000, flag: "./images/png26.png" },
-        { name: "Индия", lat: 20.93972, lon: 78.92000, flag: "./images/png16.png" },
-        { name: "Китай", lat: 36.89389, lon: 104.08444, flag: "./images/png24.png" },
-        { name: "ОАЭ", lat: 23.46611, lon: 53.84917, flag: "./images/png12.png" },
-        { name: "ЮАР", lat: -30.12889, lon: 22.95722, flag: "./images/png10.png" },
-        { name: "Иран", lat: 32.83056, lon: 53.71222, flag: "./images/png14.png" },
-        { name: "Египет", lat: 27.11194, lon: 30.77722, flag: "./images/png06.png" },
-        { name: "Саудовская Аравия", lat: 24.34944, lon: 44.95917, flag: "./images/png02.png" }
+        { name: "Бразилия", lat: -8.7667, lon: -63.9, flag: "./images/png22.webp" },
+        { name: "Эфиопия", lat: 9.1958, lon: 40.4925, flag: "./images/png19.webp" },
+        { name: "Россия", lat: 62.14389, lon: 105.57000, flag: "./images/png26.webp" },
+        { name: "Индия", lat: 20.93972, lon: 78.92000, flag: "./images/png16.webp" },
+        { name: "Китай", lat: 36.89389, lon: 104.08444, flag: "./images/png24.webp" },
+        { name: "ОАЭ", lat: 23.46611, lon: 53.84917, flag: "./images/png12.webp" },
+        { name: "ЮАР", lat: -30.12889, lon: 22.95722, flag: "./images/png10.webp" },
+        { name: "Иран", lat: 32.83056, lon: 53.71222, flag: "./images/png14.webp" },
+        { name: "Египет", lat: 27.11194, lon: 30.77722, flag: "./images/png06.webp" },
+        { name: "Саудовская Аравия", lat: 24.34944, lon: 44.95917, flag: "./images/png02.webp" }
     ],
     SCO: [
-        { name: "Казахстан", lat: 48.30444, lon: 66.92583, flag: "./images/png21.png" },
-        { name: "Пакистан", lat: 30.61917, lon: 69.35250, flag: "./images/png18.png" },
-        { name: "Беларусь", lat: 53.79389, lon: 27.98500, flag: "./images/png27.png" },
-        { name: "Россия", lat: 62.14389, lon: 105.57000, flag: "./images/png26.png" },
-        { name: "Иран", lat: 32.83056, lon: 53.71222, flag: "./images/png14.png" },
-        { name: "Китай", lat: 36.89389, lon: 104.08444, flag: "./images/png24.png" },
-        { name: "Индия", lat: 20.93972, lon: 78.92000, flag: "./images/png16.png" },
-        { name: "Узбекистан", lat: 41.65417, lon: 64.56194, flag: "./images/png17.png" },
-        { name: "Кыргызстан", lat: 41.32667, lon: 74.77333, flag: "./images/png20.png" },
-        { name: "Таджикистан", lat: 38.94917, lon: 71.29667, flag: "./images/png15.png" }
+        { name: "Казахстан", lat: 48.30444, lon: 66.92583, flag: "./images/png21.webp" },
+        { name: "Пакистан", lat: 30.61917, lon: 69.35250, flag: "./images/png18.webp" },
+        { name: "Беларусь", lat: 53.79389, lon: 27.98500, flag: "./images/png27.webp" },
+        { name: "Россия", lat: 62.14389, lon: 105.57000, flag: "./images/png26.webp" },
+        { name: "Иран", lat: 32.83056, lon: 53.71222, flag: "./images/png14.webp" },
+        { name: "Китай", lat: 36.89389, lon: 104.08444, flag: "./images/png24.webp" },
+        { name: "Индия", lat: 20.93972, lon: 78.92000, flag: "./images/png16.webp" },
+        { name: "Узбекистан", lat: 41.65417, lon: 64.56194, flag: "./images/png17.webp" },
+        { name: "Кыргызстан", lat: 41.32667, lon: 74.77333, flag: "./images/png20.webp" },
+        { name: "Таджикистан", lat: 38.94917, lon: 71.29667, flag: "./images/png15.webp" }
     ],
     CIS: [
-        { name: "Россия", lat: 62.14389, lon: 105.57000, flag: "./images/png26.png" },
-        { name: "Армения", lat: 40.10889, lon: 45.04444, flag: "./images/png29.png" },
-        { name: "Беларусь", lat: 53.79389, lon: 27.98500, flag: "./images/png27.png" },
-        { name: "Молдавия", lat: 47.46028, lon: 28.34972, flag: "./images/png28.png" },
-        { name: "Узбекистан", lat: 41.65417, lon: 64.56194, flag: "./images/png17.png" },
-        { name: "Кыргызстан", lat: 41.32667, lon: 74.77333, flag: "./images/png20.png" },
-        { name: "Таджикистан", lat: 38.94917, lon: 71.29667, flag: "./images/png15.png" },
-        { name: "Азербайджан", lat: 40.24111, lon: 47.58333, flag: "./images/png25.png" }
+        { name: "Россия", lat: 62.14389, lon: 105.57000, flag: "./images/png26.webp" },
+        { name: "Армения", lat: 40.10889, lon: 45.04444, flag: "./images/png29.webp" },
+        { name: "Беларусь", lat: 53.79389, lon: 27.98500, flag: "./images/png27.webp" },
+        { name: "Молдавия", lat: 47.46028, lon: 28.34972, flag: "./images/png28.webp" },
+        { name: "Узбекистан", lat: 41.65417, lon: 64.56194, flag: "./images/png17.webp" },
+        { name: "Кыргызстан", lat: 41.32667, lon: 74.77333, flag: "./images/png20.webp" },
+        { name: "Таджикистан", lat: 38.94917, lon: 71.29667, flag: "./images/png15.webp" },
+        { name: "Азербайджан", lat: 40.24111, lon: 47.58333, flag: "./images/png25.webp" }
     ],
     EAEU: [
-        { name: "Россия", lat: 62.14389, lon: 105.57000, flag: "./images/png26.png" },
-        { name: "Беларусь", lat: 53.79389, lon: 27.98500, flag: "./images/png27.png" },
-        { name: "Казахстан", lat: 48.30444, lon: 66.92583, flag: "./images/png21.png" },
-        { name: "Кыргызстан", lat: 41.32667, lon: 74.77333, flag: "./images/png20.png" },
-        { name: "Таджикистан", lat: 38.94917, lon: 71.29667, flag: "./images/png15.png" }
+        { name: "Россия", lat: 62.14389, lon: 105.57000, flag: "./images/png26.webp" },
+        { name: "Беларусь", lat: 53.79389, lon: 27.98500, flag: "./images/png27.webp" },
+        { name: "Казахстан", lat: 48.30444, lon: 66.92583, flag: "./images/png21.webp" },
+        { name: "Кыргызстан", lat: 41.32667, lon: 74.77333, flag: "./images/png20.webp" },
+        { name: "Таджикистан", lat: 38.94917, lon: 71.29667, flag: "./images/png15.webp" }
     ],
     APEC: [
-        { name: "Филиппины", lat: 13.1875, lon: 121.7844, flag: "./images/png32.png" },
-        { name: "Австралия", lat: -24.3336, lon: 133.692, flag: "./images/png31.png" },
-        { name: "Сингапур", lat: 1.3642, lon: 103.8192, flag: "./images/png30.png" },
-        { name: "Канада", lat: 56.7656, lon: -106.5872, flag: "./images/png28.png" },
-        { name: "Россия", lat: 62.14389, lon: 105.57000, flag: "./images/png26.png" },
-        { name: "Китай", lat: 36.89389, lon: 104.08444, flag: "./images/png24.png" },
-        { name: "Бруней", lat: 4.5714, lon: 114.7292, flag: "./images/png17.png" },
-        { name: "Япония", lat: 36.5556, lon: 138.2319, flag: "./images/png13.png" },
-        { name: "Таиланд", lat: 16.0928, lon: 100.9325, flag: "./images/png09.png" },
-        { name: "Малайзия", lat: 4.4483, lon: 101.9172, flag: "./images/png04.png" },
-        { name: "Индонезия", lat: 0.5225, lon: 114.0325, flag: "./images/png03.png" },
-        { name: "Республика Корея", lat: 36.002, lon: 127.7617, flag: "./images/png01.png" }
+        { name: "Филиппины", lat: 13.1875, lon: 121.7844, flag: "./images/png32.webp" },
+        { name: "Австралия", lat: -24.3336, lon: 133.692, flag: "./images/png31.webp" },
+        { name: "Сингапур", lat: 1.3642, lon: 103.8192, flag: "./images/png30.webp" },
+        { name: "Канада", lat: 56.7656, lon: -106.5872, flag: "./images/png28.webp" },
+        { name: "Россия", lat: 62.14389, lon: 105.57000, flag: "./images/png26.webp" },
+        { name: "Китай", lat: 36.89389, lon: 104.08444, flag: "./images/png24.webp" },
+        { name: "Бруней", lat: 4.5714, lon: 114.7292, flag: "./images/png17.webp" },
+        { name: "Япония", lat: 36.5556, lon: 138.2319, flag: "./images/png13.webp" },
+        { name: "Таиланд", lat: 16.0928, lon: 100.9325, flag: "./images/png09.webp" },
+        { name: "Малайзия", lat: 4.4483, lon: 101.9172, flag: "./images/png04.webp" },
+        { name: "Индонезия", lat: 0.5225, lon: 114.0325, flag: "./images/png03.webp" },
+        { name: "Республика Корея", lat: 36.002, lon: 127.7617, flag: "./images/png01.webp" }
     ]
 };
 
