@@ -1,47 +1,52 @@
 <!DOCTYPE html>
 <html lang="en">
-    <head>
-        <meta charset="UTF-8" />
-        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-        <meta name="description" content="Интерактивная визуализация Земли с данными организаций BRICS, ШОС, СНГ, ЕАЭС и АТЭС. Исследуйте световые столбы и ключевые места в реальном времени." />
-        <meta name="keywords" content="interactive earth, visualization, 3D globe, BRICS, SCO, CIS, EAEU, APEC, Three.js, световые столбы" />
-        <meta name="author" content="Author" />
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta
+      name="description"
+      content="Интерактивная визуализация Земли с данными организаций BRICS, ШОС, СНГ, ЕАЭС и АТЭС. Исследуйте световые столбы и ключевые места в реальном времени."
+    />
+    <meta
+      name="keywords"
+      content="interactive earth, visualization, 3D globe, BRICS, SCO, CIS, EAEU, APEC, Three.js, световые столбы"
+    />
+    <meta name="author" content="Author" />
 
-        <link rel="icon" href="/images/favicon.png" type="image/x-icon" />
-        <title>Interactive Earth Visualization</title>
-        <link rel="stylesheet" href="styles.css" />
-        <script type="importmap">
-            {
-                "imports": {
-                    "three": "https://cdn.jsdelivr.net/npm/three@0.161/build/three.module.js",
-                    "jsm/": "https://cdn.jsdelivr.net/npm/three@0.161/examples/jsm/"
-                }
-            }
-        </script>
-    </head>
-    <body>
-        <div id="preloader" class="preloader">
+    <link rel="icon" href="/images/favicon.png" type="image/x-icon" />
+    <title>Interactive Earth Visualization</title>
+    <link rel="stylesheet" href="styles.css" />
+    <link rel="stylesheet" href="./css/buttonsEffect.css" />
+    <script type="importmap">
+      {
+        "imports": {
+          "three": "https://cdn.jsdelivr.net/npm/three@0.161/build/three.module.js",
+          "jsm/": "https://cdn.jsdelivr.net/npm/three@0.161/examples/jsm/"
+        }
+      }
+    </script>
+  </head>
+  <body>
+    <!-- <div id="preloader" class="preloader">
             <div class="loader"></div>
             <div class="loading-text">Загрузка...</div>
-        </div>
-        
-        <div id="main-content" style="display: none;">
-            <!-- Твой основной контент сайта -->
-        </div>
-        
-        <div class="contaienr">
-            <h1>Работаем 24|7</h1>
-            <div id="organizations-list">
-                <button class="organization-btn" data-org="BRICS">БРИКС</button>
-                <button class="organization-btn" data-org="SCO">ШОС</button>
-                <button class="organization-btn" data-org="CIS">СНГ</button>
-                <button class="organization-btn" data-org="EAEU">ЕАЭС</button>
-                <button class="organization-btn" data-org="APEC">АТЭС</button>
-            </div>
-            <div id="country-list"></div>
-        </div>
-        <script src="https://cdn.jsdelivr.net/npm/dat.gui"></script>
-        <script type="module" src="main.js"></script>
-        <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.11.4/gsap.min.js"></script>
-    </body>
+        </div> -->
+
+    <div class="contaienr">
+      <h1>Работаем 24|7</h1>
+      <div id="organizations-list">
+        <button class="organization-btn" data-org="BRICS">БРИКС</button>
+        <button class="organization-btn" data-org="SCO">ШОС</button>
+        <button class="organization-btn" data-org="CIS">СНГ</button>
+        <button class="organization-btn" data-org="EAEU">ЕАЭС</button>
+        <button class="organization-btn" data-org="APEC">АТЭС</button>
+      </div>
+      <div id="country-list"></div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/dat.gui"></script>
+    <script type="module" src="main.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.11.4/gsap.min.js"></script>
+    <script src="https://mrdoob.github.io/stats.js/build/stats.min.js"></script>
+  </body>
 </html>

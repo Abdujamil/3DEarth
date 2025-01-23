@@ -1,0 +1,95 @@
+.slider-btn {
+  cursor: pointer;
+  border: 1px solid #202020;
+  border-radius: 4px;
+  padding: 6px 10px;
+  max-width: 225px;
+  height: 39px;
+  position: relative;
+  background: #2a2a2a;
+  transition: background 0.3s ease, transform 150ms ease, box-shadow 150ms ease;
+}
+
+.slider-btn.active {
+  background: #2a2a2a;
+  transition: background 0.3s ease, box-shadow 150ms ease;
+}
+
+.slider-btn:active {
+  background: #20272b;
+  box-shadow: inset 2px 2px 2px 0 rgba(7, 26, 38, 0.5),
+    inset -2px -2px 2px 0 rgba(7, 26, 38, 0.5);
+}
+
+.slider-btn:active .btn-text {
+  transform: scale(0.95);
+  color: #4a738c;
+}
+
+.slider-btn.active .btn-text {
+  color: #3d9ed6;
+}
+
+.slider-btn.active:active {
+  background: #20272b;
+}
+
+.slider-btn.active:active .btn-text {
+  background: #4a738c;
+  background-clip: text;
+}
+
+.btn-text {
+  display: inline-block;
+  justify-content: center;
+  transition: transform 300ms ease, font-weight 300ms ease;
+  will-change: transform, color, font-weight;
+  text-shadow: 0 0 2px 0 rgba(0, 0, 0, 0.8);
+  font-weight: 400;
+  font-size: 13px;
+  margin-bottom: 2.5px;
+  line-height: 120%;
+  text-align: center;
+  color: #ccc;
+}
+
+.btn-text.fast-click {
+  transform: scale(0.95);
+}
+
+.slider-btn.active.fast-click {
+  background: #20272b;
+  box-shadow: inset 2px 2px 2px 0 rgba(0, 0, 0, 0.2),
+    inset -2px -2px 2px 0 rgba(0, 0, 0, 0.2);
+}
+
+.slider-btn::before {
+  background: radial-gradient(
+    250px circle at var(--mouse-x) var(--mouse-y),
+    #c7c7c714,
+    transparent 30%
+  );
+  border-radius: inherit;
+  content: "";
+  height: 100%;
+  left: 0px;
+  position: absolute;
+  top: 0px;
+  width: 100%;
+  opacity: 0;
+  transition: opacity 300ms ease;
+  z-index: 20;
+}
+
+.slider-btn:hover::before {
+  opacity: 1;
+}
+
+.slider-btn.fast-click .btn-text {
+  transform: scale(0.95);
+}
+
+.slider-btn.fast-click:active .btn-text {
+  transform: scale(0.95);
+  color: #4a738c;
+}
