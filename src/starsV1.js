@@ -49,7 +49,7 @@ export class Stars {
         geometry.setAttribute('position', new THREE.BufferAttribute(positions, 3));
         geometry.setAttribute('color', new THREE.BufferAttribute(colors, 3));
         geometry.setAttribute('size', new THREE.BufferAttribute(sizes, 1));
-        
+
         const vertexShader = `
         varying vec3 vColor;
 
@@ -114,6 +114,10 @@ export class Stars {
     updateStarsCount(value) {
         this.starsCount = value;
         this.init(); // Пересоздаём звёзды
+    }
+
+    updateScale(scale) {
+        this.points.scale.set(scale, scale, scale); // Изменяем масштаб
     }
 
     updateRadius(value) {

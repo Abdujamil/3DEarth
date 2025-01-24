@@ -572,10 +572,89 @@ function onMouseMove(event) {
 
 window.addEventListener('mousemove', onMouseMove, false);
 
+// controls.addEventListener("start", () => {
+//     isHoverable = false;
+//     isRotating1 = true;
+//     pointer = new THREE.Vector2(-1, -1);
+//     gsap.to(earthGroup.scale, {
+//         duration: 0.3,
+//         x: 0.9,
+//         y: 0.9,
+//         z: 0.9,
+//         ease: "power1.inOut",
+//     });
+//     gsap.to(atmosphereMesh.scale, {
+//         duration: 0.3,
+//         x: 0.92, // Минимальный масштаб выше 0.01
+//         y: 0.92,
+//         z: 0.92,
+//         ease: "power1.inOut",
+//     });
+//     // gsap.to(stars.scale, {
+//     //     duration: 0.3,
+//     //     x: 0.5,
+//     //     y: 0.5,
+//     //     z: 0.5,
+//     //     ease: "power1.inOut",
+//     // });
+
+//     if (currentStars) {
+//         gsap.to(currentStars.scale, {
+//             duration: 0.3,
+//             x: 0.5,
+//             y: 0.5,
+//             z: 0.5,
+//             ease: "power1.inOut",
+//         });
+//     }
+// });
+
+// controls.addEventListener("end", () => {
+//     gsap.to(earthGroup.scale, {
+//         duration: 0.6,
+//         x: 1,
+//         y: 1,
+//         z: 1,
+//         ease: "back(1.7).out",
+//         onComplete: () => {
+//             isHoverable = true;
+//             isRotating1 = false;
+//         },
+//     });
+//     gsap.to(atmosphereMesh.scale, {
+//         duration: 0.6,
+//         x: 1.02,
+//         y: 1.02,
+//         z: 1.02,
+//         ease: "back(1.7).out",
+//         onComplete: () => {
+//             isHoverable = true;
+//             isRotating1 = false;
+//         },
+//     });
+//     // gsap.to(stars.scale, {
+//     //     duration: 0.6,
+//     //     x: 1,
+//     //     y: 1,
+//     //     z: 1,
+//     //     ease: "back(1.7).out",
+//     // });
+//     if (currentStars) {
+//         gsap.to(currentStars.scale, {
+//             duration: 0.6,
+//             x: 1,
+//             y: 1,
+//             z: 1,
+//             ease: "back(1.7).out",
+//         });
+//     }
+// });
+
 controls.addEventListener("start", () => {
     isHoverable = false;
     isRotating1 = true;
     pointer = new THREE.Vector2(-1, -1);
+
     gsap.to(earthGroup.scale, {
         duration: 0.3,
         x: 0.9,
@@ -585,18 +664,31 @@ controls.addEventListener("start", () => {
     });
     gsap.to(atmosphereMesh.scale, {
         duration: 0.3,
-        x: 0.92, // Минимальный масштаб выше 0.01
+        x: 0.92,
         y: 0.92,
         z: 0.92,
         ease: "power1.inOut",
     });
-    gsap.to(stars.scale, {
-        duration: 0.3,
-        x: 0.5,
-        y: 0.5,
-        z: 0.5,
-        ease: "power1.inOut",
-    });
+
+    // Универсальная анимация сжатия звёзд
+    if (params.starVariant === "Первый вариант" && currentStars instanceof Stars) {
+        gsap.to(currentStars.getPoints().scale, {
+            duration: 0.3,
+            x: 0.5,
+            y: 0.5,
+            z: 0.5,
+            ease: "power1.inOut",
+        });
+    } else if (params.starVariant === "Второй вариант" && currentStars) {
+        // Сжимаем все звезды второго варианта
+        gsap.to(currentStars.scale, {
+            duration: 0.3,
+            x: 0.5,
+            y: 0.5,
+            z: 0.5,
+            ease: "power1.inOut",
+        });
+    }
 });
 
 controls.addEventListener("end", () => {
@@ -617,19 +709,28 @@ controls.addEventListener("end", () => {
         y: 1.02,
         z: 1.02,
         ease: "back(1.7).out",
-        onComplete: () => {
-            isHoverable = true;
-            isRotating1 = false;
-        },
     });
-    gsap.to(stars.scale, {
-        duration: 0.6,
-        x: 1,
-        y: 1,
-        z: 1,
-        ease: "back(1.7).out",
-    });
+
+    // Восстанавливаем звезды
+    if (params.starVariant === "Первый вариант" && currentStars instanceof Stars) {
+        gsap.to(currentStars.getPoints().scale, {
+            duration: 0.6,
+            x: 1,
+            y: 1,
+            z: 1,
+            ease: "back(1.7).out",
+        });
+    } else if (params.starVariant === "Второй вариант" && currentStars) {
+        gsap.to(currentStars.scale, {
+            duration: 0.6,
+            x: 1,
+            y: 1,
+            z: 1,
+            ease: "back(1.7).out",
+        });
+    }
 });
+
 
 let hoveredGroup = null;
 
