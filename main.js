@@ -6,6 +6,7 @@ import { FontLoader } from 'jsm/loaders/FontLoader.js';
 // import './src/loader.js';
 import getStarfield from "./src/getStarfield.js";
 import { getStars } from './src/stars.js';
+import { Stars } from "./src/starsV1.js";
 import { getFresnelMat } from "./src/getFresnelMat.js";
 import { createLightPillar } from "./src/LightPillars.js";
 
@@ -36,11 +37,21 @@ const params = {
 
     cloudeOpacity: 0.35,
     texture: "Variant 1",
+    cloudesTextures: "Variant 1",
 
     bumpScale: 0.05, // Глубина вжатия
-    atmosphereOpacity: 0.5, // Прозрачность атмосферы
     saturation: 1.0, // Насыщенность цвета
     brightness: 1.0, // Яркость цвета
+    color: "#000000", // Цвет фона сферы
+
+
+    atmosphereOpacity: 0.5, // Прозрачность атмосферы
+    atmosphereColor: "#0bbcff", // Цвет атмосферы
+    scaleX: 1.02, // Масштаб по X
+    scaleY: 1.02, // Масштаб по Y
+    scaleZ: 1.02, // Масштаб по Z
+
+    starVariant: "Первый вариант",
 };
 
 let colors = [
@@ -57,12 +68,20 @@ const textures = [
     { name: "Variant 1", path: "./textures/2k_earth_daymap.webp" },
     { name: "Variant 2", path: "./textures/00_earthmap1k.webp" },
     // { name: "Variant 3", path: "./textures/2k_earth_nightmap.webp" },
-    { name: "Variant 4", path: "./textures/03_earthlights1k.webp" },
+    // { name: "Variant 4", path: "./textures/03_earthlights1k.webp" },
     { name: "Variant 5", path: "./textures/8k_earth_daymap.jpg" },
     // { name: "Variant 6", path: "./textures/8k_earth_nightmap.webp" },
     { name: "Variant 7", path: "./textures/earth_atmos_2048.webp" },
     { name: "China", path: "./textures/Earth_Diffuse_6K.jpg" },
     // { name: "Variant 9", path: "./textures/Earth_Illumination_6K.jpg" },
+];
+
+const cloudesTextures = [
+    { name: "Variant 1", path: "./textures/Earth_Clouds_6K.jpg" },
+    { name: "Variant 2", path: "./textures/04_earthcloudmap.webp" },
+    { name: "Variant 3", path: "./textures/05_earthcloudmap.webp" },
+    { name: "Variant 4", path: "./textures/8k_earth_clouds.webp" },
+    { name: "China", path: "./textures/2k_earth_clouds.webp" },
 ];
 
 const scene = new THREE.Scene();
@@ -156,9 +175,7 @@ const material = new THREE.MeshPhongMaterial({
     // map: loader.load("./textures/Earth_Diffuse_6K.jpg"),
     // bumpMap: loader.load("./textures/Earth_NormalNRM_6K.jpg"),
     bumpScale: 1,
-    // color: 0xffffff,
-    color: 0x1E90FF,
-    // color: 0x8FBC8F,
+    color: params.color,
     shininess: 100,
     saturation: 1,
 });
@@ -168,11 +185,12 @@ const earthMesh = new THREE.Mesh(geometry, material);
 earthGroup.add(earthMesh);
 
 const lightsMat = new THREE.MeshBasicMaterial({
-    // map: loader.load("./textures/8k_earth_daymap.jpg"),
+    map: loader.load("./textures/8k_earth_daymap.jpg"),
     // map: loader.load("./textures/Earth_Illumination_6K.jpg"),
     // map: loader.load("./textures/8k_earth_nightmap.webp"),
-    map: loader.load("./textures/Earth_Clouds_6K.jpg"),
-    // map: loader.load("./textures/Earth_Diffuse_6K.jpg"),
+
+    // map: loader.load("./textures/Earth_Clouds_6K.jpg"),
+    map: loader.load(cloudesTextures[0].path),
     blending: THREE.AdditiveBlending,
     color: 0xffffff,
     shininess: 50,
@@ -202,16 +220,16 @@ earthGroup.add(lightsMesh1);
 const cloudsMaterial = new THREE.MeshPhongMaterial({
     map: cloudsTexture,
     transparent: true,
-    opacity: 0.8,
+    opacity: 0.5,
     depthWrite: false,
 });
 
 const cloudsMat = new THREE.MeshStandardMaterial({
-    map: loader.load("./textures/Earth_Clouds_6K.jpg"),
+    map: cloudsTexture,
     // transparent: false,
     // opacity: 1,  // Reduced from 0.8 to make clouds less dense
     blending: THREE.AdditiveBlending,
-    alphaMap: loader.load('./textures/05_earthcloudmaptrans.webp'),
+    // alphaMap: loader.load('./textures/05_earthcloudmaptrans.webp'),
     // alphaMap: loader.load('./textures/Earth_Clouds_6K.jpg'),
     color: 0xffffff,  // Changed from 0xe0e0e0 to white for brighter clouds
     transparent: false,
@@ -235,6 +253,7 @@ earthGroup.add(cloudsMesh);
 const atmosphereMaterial = new THREE.ShaderMaterial({
     uniforms: {
         blurAmount: { value: params.atmosphereOpacity },
+        atmosphereColor: { value: new THREE.Color(params.atmosphereColor) },
     },
     vertexShader: `
       varying vec3 vNormal;
@@ -245,24 +264,23 @@ const atmosphereMaterial = new THREE.ShaderMaterial({
       }
     `,
     fragmentShader: `
-      varying vec3 vNormal;
+    uniform float blurAmount; // Добавляем uniform для прозрачности
+    uniform vec3 atmosphereColor; // Цвет атмосферы
+    varying vec3 vNormal;
 
-      void main() {
+    void main() {
         float intensity = pow(1.0 - dot(vNormal, vec3(0.0, 0.0, 1.0)), 3.0);
 
-        // float blur = smoothstep(0.0, blurAmount, intensity);
-
-        gl_FragColor = vec4(0.2, 0.5, 1.0, 1.0) * intensity;
-
-        // gl_FragColor = vec4(atmosphereColor * blur, blur);
-      }
-    `,
+        // Используем blurAmount для управления прозрачностью
+        gl_FragColor = vec4(atmosphereColor, blurAmount) * intensity;
+    }
+`,
     blending: THREE.AdditiveBlending,
     side: THREE.BackSide,
     transparent: true,
 });
 const atmosphereMesh = new THREE.Mesh(geometry, atmosphereMaterial);
-atmosphereMesh.scale.set(1.02, 1.02, 1.02);
+atmosphereMesh.scale.set(params.scaleX, params.scaleY, params.scaleZ);
 scene.add(atmosphereMesh);
 
 
@@ -270,8 +288,38 @@ scene.add(atmosphereMesh);
 // stars.material.transparent = true;
 // scene.add(stars);
 
-let stars = getStars({ numStars: params.numStars, starSize: params.starSize });
-scene.add(stars);
+
+// ------- первый вариант -----------//
+// const stars = new Stars({ stars: 10000, velocity: 1, radius: .2, alpha: 1 });
+// scene.add(stars.getPoints());
+
+// ------- второй вариант -----------//
+//let stars = getStars({ numStars: params.numStars, starSize: params.starSize });
+//scene.add(stars);
+
+
+let currentStars; // Текущий объект звёзд
+
+function updateStars() {
+    // Удаляем текущие звёзды из сцены
+    if (currentStars) {
+        scene.remove(currentStars.getPoints ? currentStars.getPoints() : currentStars);
+    }
+
+    // Проверяем выбранный вариант
+    if (params.starVariant === "Первый вариант") {
+        // Создаём звёзды первого варианта
+        const stars = new Stars({ stars: 10000, velocity: 1, radius: 0.2, alpha: 1 });
+        scene.add(stars.getPoints());
+        currentStars = stars; // Сохраняем объект звёзд
+    } else if (params.starVariant === "Второй вариант") {
+        // Создаём звёзды второго варианта
+        const stars = getStars({ numStars: params.numStars, starSize: params.starSize });
+        scene.add(stars);
+        currentStars = stars; // Сохраняем объект звёзд
+    }
+}
+
 
 // Улучшение освещения
 const pointLight = new THREE.PointLight(0xffffff, 2, 10); // Увеличена яркость
@@ -754,6 +802,26 @@ planetFolder.add(params, 'atmosphereOpacity', 0.0, 1.0).name('Прозрачно
     atmosphereMaterial.uniforms.blurAmount.value = value;
 });
 
+planetFolder.addColor(params, "atmosphereColor").name("Цвет атмосферы").onChange((value) => {
+    // Обновляем цвет в uniform
+    atmosphereMaterial.uniforms.atmosphereColor.value.set(value);
+    console.log(`Выбранный цвет атмосферы: ${value}`); // Лог выбранного цвета
+});
+
+planetFolder.add(params, 'scaleX', 0.5, 2.0).name('Масштаб X').onChange((value) => {
+    atmosphereMesh.scale.x = value;
+});
+
+planetFolder.add(params, 'scaleY', 0.5, 2.0).name('Масштаб Y').onChange((value) => {
+    atmosphereMesh.scale.y = value;
+});
+
+planetFolder.add(params, 'scaleZ', 0.5, 2.0).name('Масштаб Z').onChange((value) => {
+    atmosphereMesh.scale.z = value;
+});
+
+
+
 planetFolder.add(params, 'cloudeOpacity', 0.1, 1).step(0.01).name('Прозрачность облаков').onChange(value => {
     lightsMat.opacity = value;
     lightsMat.needsUpdate = true;
@@ -775,6 +843,11 @@ planetFolder.add(params, 'rotationSpeed', 0.0001, 1).name('Cкорость вр�
     velocityX = value;
 });
 
+// Добавляем выбор цвета
+planetFolder.addColor(params, 'color').name('Цвет планеты').onChange((value) => {
+    material.color.set(value);  // Обновляем цвет материала
+});
+
 //----------------- Космос -------------------//
 const spaceFolder = gui.addFolder("Космос");
 
@@ -793,6 +866,22 @@ spaceFolder.add(params, 'starSize', 0.01, 0.5).step(0.01).name('Размер з�
     stars = getStars({ numStars: params.numStars, starSize: params.starSize });
     scene.add(stars);
 });
+
+// Добавляем параметры
+
+// spaceFolder.add(stars, 'starsCount', 100, 1000000).name('Количество звёзд').onChange(value => stars.updateStarsCount(value));
+
+// spaceFolder.add(stars, 'radius', 0.1, 5).name('Размер звёзд').onChange(value => stars.updateRadius(value));
+
+// spaceFolder.add(stars, 'trailLength', 0, 1).name('Длина хвоста').onChange(value => stars.updateTrailLength(value));
+
+// spaceFolder.add(stars, 'saturation', 0, 2).name('Насыщенность цвета').onChange(value => stars.updateSaturation(value));
+
+// spaceFolder.add(stars, 'twinkleType', ['random', 'smooth']).name('Варианты мерцания').onChange(value => stars.updateTwinkleType(value));
+
+// spaceFolder.add(stars, 'panoramaEnabled').name('Панорама').onChange(value => stars.updatePanoramaEnabled(value));
+
+// spaceFolder.add(stars, 'depthEnabled').name('Глубина').onChange(value => stars.updateDepthEnabled(value));
 
 //----------------- Прочее -------------------//
 const miscFolder = gui.addFolder("Прочее");
@@ -823,6 +912,33 @@ miscFolder.add(params, 'texture', textures.map(t => t.name)) // Добавляе
         }
     });
 
+miscFolder.add(params, 'cloudesTextures', cloudesTextures.map(t => t.name)) // Добавляем текстуры
+    .name('Текстура облаков')
+    .onChange((selectedName) => {
+        const selectedTexture = cloudesTextures.find(t => t.name === selectedName);
+        if (selectedTexture) {
+            const newTexture = loader.load(selectedTexture.path);
+            lightsMat.map = newTexture;
+            lightsMat.needsUpdate = true;
+            renderer.render(scene, camera);
+        } else {
+            console.error("Texture not found");
+        }
+    });
+
+//----------------- Варианты звёзд -------------------//
+const starsFolder = gui.addFolder("Звёзды");
+
+starsFolder.add(params, "starVariant", ["Первый вариант", "Второй вариант"])
+    .name("Вариант звёзд")
+    .onChange(() => {
+        updateStars(); // Обновляем звёзды при изменении варианта
+    });
+
+starsFolder.add(params, "numStars", 1000, 10000).step(500).name("Кол-во звёзд (2 вариант)");
+starsFolder.add(params, "starSize", 0.1, 1).step(0.1).name("Размер звёзд (2 вариант)");
+updateStars();
+
 // Настраиваем внешний вид панели
 const panel = gui.domElement;
 panel.style.position = 'absolute';
@@ -847,8 +963,8 @@ stats.dom.style.top = '10px';
 // Логирование производительности
 function logPerformance() {
     const performanceEntries = performance.getEntriesByType("navigation")[0];
-    console.log("Время загрузки страницы:", performanceEntries.loadEventEnd.toFixed(2), "мс");
-    console.log("Время DOMContentLoaded:", performanceEntries.domContentLoadedEventEnd.toFixed(2), "мс");
+    // console.log("Время загрузки страницы:", performanceEntries.loadEventEnd.toFixed(2), "мс");
+    // console.log("Время DOMContentLoaded:", performanceEntries.domContentLoadedEventEnd.toFixed(2), "мс");
 }
 
 window.addEventListener('load', logPerformance);
@@ -905,6 +1021,10 @@ function animate(currentTime) {
     //     y: camera.position.y * 0.001,
     //     z: camera.position.z * 0.001
     // }, currentTime * 0.001);
+
+    if (params.starVariant === "Первый вариант" && currentStars instanceof Stars) {
+        currentStars.animate();
+    }
 
 
     // Обновляем видимость звёзд (если используется логика видимости)
